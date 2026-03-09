@@ -12,6 +12,8 @@ A Firefox sidebar extension for quick text translation with Google Translate & C
 - **Smart EN↔RU Auto-Swap**: Automatically swaps direction based on Cyrillic detection
 - **Auto-Copy**: Translation automatically copied to clipboard
 - **Text Chunking**: Handles large texts (splits at 3,500 chars, preserves sentences)
+- **Progress Indicator**: Shows progress for multi-chunk translations
+- **Clean Sidebar UI**: Always accessible, doesn't interfere with browsing
 - **Separate Tab Mode**: Click extension icon to open translator in a dedicated tab
 - **Cloudflare Worker Proxy**: Enhanced reliability with rate limiting protection  
 - **State Persistence**: Automatically saves input text, translation results, and language selection in Firefox browser storage   
@@ -29,6 +31,13 @@ A Firefox sidebar extension for quick text translation with Google Translate & C
 - **`icon32.svg`** - Extension icon (32x32px)
 - **`icon48.svg`** - Extension icon (48x48px)
 - **`icon96.svg`** - Extension icon (96x96px)
+
+&nbsp;  
+
+## Documentation
+
+- `DEPLOYMENT_GUIDE.md` - How to deploy Cloudflare Worker  
+- `WORKFLOW.md` - Detailed translation workflow    
 
 &nbsp;  
 
@@ -58,12 +67,12 @@ Coming soon!
 
 &nbsp;  
 
-## 🔧 Architecture
+## Architecture
 
 ### System Overview
 
 ```
-┌──────────────────┐
+┌─────────────────┐
 │  Firefox Browser │
 │   (Your Device)  │
 └────────┬─────────┘
@@ -111,14 +120,14 @@ Coming soon!
          │ 8. Normalized JSON response
          │
          ▼
-┌──────────────────┐
+┌─────────────────┐
 │  Firefox Browser │
 │  ┌───────────┐   │
 │  │ Auto-copy │   │
 │  │ Display   │   │
 │  │ Save      │   │
 │  └───────────┘   │
-└──────────────────┘
+└─────────────────┘
 ```
 
 &nbsp;
@@ -431,11 +440,28 @@ Your Browser → Cloudflare Worker → Google Translate → Cloudflare Worker �
 
 &nbsp;  
 
+## Troubleshooting
 
-## Documentation
+**If translations are not working:**
 
-- `DEPLOYMENT_GUIDE.md` - How to deploy Cloudflare Worker
-- `WORKFLOW.md` - Detailed translation workflow
+1. **Cloudflare Service Issues**: Cloudflare Workers may be temporarily unavailable due to:
+   - Regional outages
+   - Network restrictions
+   - Firewall blocking
+
+&nbsp;  
+
+2. **Proxy Configuration**: If you're behind a corporate firewall or using a VPN, add the Cloudflare Worker URL to your proxy whitelist/connection tools:
+
+&nbsp;  
+
+`https://5late-translator.5lateextentionfirefox.workers.dev`  
+
+
+&nbsp;  
+
+3. **Fallback System**: The extension automatically tries direct Google Translate endpoints if the Worker fails.
+
 
 &nbsp;  
 
