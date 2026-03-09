@@ -2,7 +2,7 @@
 
 A Firefox sidebar extension for quick text translation with Google Translate & Cloudflare Worker proxy.
 
-&nbsp;  
+&nbsp;  
 
 ## Features
 
@@ -12,19 +12,32 @@ A Firefox sidebar extension for quick text translation with Google Translate & C
 - **Smart EN↔RU Auto-Swap**: Automatically swaps direction based on Cyrillic detection
 - **Auto-Copy**: Translation automatically copied to clipboard
 - **Text Chunking**: Handles large texts (splits at 3,500 chars, preserves sentences)
-- **Progress Indicator**: Shows progress for multi-chunk translations
-- **Clean Sidebar UI**: Always accessible, doesn't interfere with browsing
-- **Cloudflare Worker Proxy**: Enhanced reliability with rate limiting protection
-- **State Persistence**: Saves your work between sessions  
+- **Separate Tab Mode**: Click extension icon to open translator in a dedicated tab
+- **Cloudflare Worker Proxy**: Enhanced reliability with rate limiting protection  
+- **State Persistence**: Automatically saves input text, translation results, and language selection in Firefox browser storage   
 
-&nbsp;  
+&nbsp;  
 
-## Installation  
+## Project Files
+
+- **`manifest.json`** - Extension configuration, permissions, and metadata
+- **`sidebar.html`** - HTML structure for sidebar and tab interface
+- **`sidebar.css`** - Styling and layout for the translator interface
+- **`sidebar.js`** - Main translation logic, API calls, and UI handling
+- **`background.js`** - Background service worker for extension lifecycle
+- **`icon16.svg`** - Extension icon (16x16px)
+- **`icon32.svg`** - Extension icon (32x32px)
+- **`icon48.svg`** - Extension icon (48x48px)
+- **`icon96.svg`** - Extension icon (96x96px)
+
+&nbsp;  
+
+## Installation  
 
 ### From Firefox Add-ons Store
 Coming soon!
 
-&nbsp;  
+&nbsp;  
 
 ### Development Installation
 1. Open Firefox → `about:debugging#/runtime/this-firefox`
@@ -32,6 +45,7 @@ Coming soon!
 3. Navigate to extension folder
 4. Select `manifest.json`
 5. Open sidebar: Click extension icon
+
 &nbsp;
 
 ## Usage
@@ -42,14 +56,14 @@ Coming soon!
 4. **Result auto-copied**: Translation is copied to clipboard
 5. **Change language**: Use dropdown to select target language
 
-&nbsp;  
+&nbsp;  
 
 ## 🔧 Architecture
 
 ### System Overview
 
 ```
-┌─────────────────┐
+┌──────────────────┐
 │  Firefox Browser │
 │   (Your Device)  │
 └────────┬─────────┘
@@ -97,14 +111,14 @@ Coming soon!
          │ 8. Normalized JSON response
          │
          ▼
-┌─────────────────┐
+┌──────────────────┐
 │  Firefox Browser │
 │  ┌───────────┐   │
 │  │ Auto-copy │   │
 │  │ Display   │   │
 │  │ Save      │   │
 │  └───────────┘   │
-└─────────────────┘
+└──────────────────┘
 ```
 
 &nbsp;
@@ -115,21 +129,21 @@ Coming soon!
 - User types or pastes text into input textarea
 - Extension waits 1.5 seconds (debounce)
 
-&nbsp;  
+&nbsp;  
 
 **Step 2: Text Processing**
 - Check for EN↔RU auto-swap (Cyrillic detection)
 - Split text into chunks (max 3,500 chars per chunk)
 - Preserve sentence boundaries
 
-&nbsp;  
+&nbsp;  
 
 **Step 3: Authentication**
 - Generate daily token: `SHA-256(current_date + secret_salt)`
 - Token changes automatically at midnight UTC
 - Same algorithm in extension and Worker
 
-&nbsp;  
+&nbsp;  
 
 **Step 4: Request to Worker**
 ```javascript
@@ -144,7 +158,7 @@ Body: {
 }
 ```
 
-&nbsp;  
+&nbsp;  
 
 **Step 5: Worker Processing**
 - Validates token (rejects if invalid)
@@ -152,14 +166,14 @@ Body: {
 - Forwards to Google Translate GTX endpoint
 - If GTX fails → tries clients5 endpoint
 
-&nbsp;  
+&nbsp;  
 
 **Step 6: Google Translation**
 - Auto-detects source language
 - Translates to target language
 - Returns JSON response
 
-&nbsp;  
+&nbsp;  
 
 
 **Step 7: Response Processing**
@@ -167,7 +181,7 @@ Body: {
 - Adds CORS headers
 - Returns to extension
 
-&nbsp;  
+&nbsp;  
 
 
 **Step 8: Display Results**
@@ -176,7 +190,7 @@ Body: {
 - Displays in output textarea
 - Saves to browser storage
 
-&nbsp;  
+&nbsp;  
 
 
 ### Fallback System
@@ -191,7 +205,7 @@ Fallback2: Direct → Google clients5
 Error:     Show error message to user
 ```
 
-&nbsp;  
+&nbsp;  
 
 
 ### Component Responsibilities
@@ -204,7 +218,7 @@ Error:     Show error message to user
 - **Auto-copy**: Clipboard integration
 - **Debouncing**: 1.5s delay after typing stops
 
-&nbsp;  
+&nbsp;  
 
 
 #### Cloudflare Worker
@@ -215,7 +229,7 @@ Error:     Show error message to user
 - **Error Handling**: Graceful fallbacks
 - **CORS**: Cross-origin headers
 
-&nbsp;  
+&nbsp;  
 
 
 #### Google Translate API
@@ -224,7 +238,7 @@ Error:     Show error message to user
 - **No Authentication**: Public endpoint
 - **No Storage**: Temporary processing only
 
-&nbsp;  
+&nbsp;  
 
 
 ### Data Storage
@@ -239,7 +253,7 @@ Error:     Show error message to user
 }
 ```
 
-&nbsp;  
+&nbsp;  
 
 
 **Worker Storage (In-Memory)**
@@ -253,7 +267,7 @@ Error:     Show error message to user
 }
 ```
 
-&nbsp;  
+&nbsp;  
 
 
 **No Persistent Storage**
@@ -262,7 +276,7 @@ Error:     Show error message to user
 - No tracking
 - No analytics
 
-&nbsp;  
+&nbsp;  
 
 
 ### Performance Optimization
@@ -272,7 +286,7 @@ Error:     Show error message to user
 - Reduces duplicate translation requests
 - Faster response times
 
-&nbsp;  
+&nbsp;  
 
 
 **Chunking**
@@ -280,7 +294,7 @@ Error:     Show error message to user
 - Parallel processing possible (currently sequential)
 - Progress indicator for multi-chunk
 
-&nbsp;  
+&nbsp;  
 
 
 **Debouncing**
@@ -288,7 +302,7 @@ Error:     Show error message to user
 - Prevents unnecessary API calls
 - Reduces rate limit usage
 
-&nbsp;  
+&nbsp;  
 
 
 ### Scalability
@@ -299,7 +313,7 @@ Error:     Show error message to user
 - Text Size: 5,000 chars per request
 - Chunk Size: 3,500 chars per chunk
 
-&nbsp;  
+&nbsp;  
 
 
 **Estimated Capacity**
@@ -307,7 +321,7 @@ Error:     Show error message to user
 - Average user: 50-100 translations/day
 - Peak usage: ~1000 requests/hour supported  
 
-&nbsp;  
+&nbsp;  
 
 
 ## Security & Privacy
@@ -317,7 +331,7 @@ Error:     Show error message to user
 Your Browser → Cloudflare Worker → Google Translate → Cloudflare Worker → Your Browser
 ```
 
-&nbsp;  
+&nbsp;  
 
 
 ### Security Layers
@@ -330,7 +344,7 @@ Your Browser → Cloudflare Worker → Google Translate → Cloudflare Worker �
 - **Bot Detection**: Filters malicious automated requests
 - **IP-based Blocking**: Prevents abuse from specific addresses
 
-&nbsp;  
+&nbsp;  
 
 
 #### 2. Extension (Authentication Security)
@@ -340,7 +354,7 @@ Your Browser → Cloudflare Worker → Google Translate → Cloudflare Worker �
 - **Automatic Rotation**: New token generated daily at midnight UTC
 - **No Stored Credentials**: No API keys or passwords stored
 
-&nbsp;  
+&nbsp;  
 
 
 #### 3. Google Translate (Translation Service)
@@ -350,7 +364,7 @@ Your Browser → Cloudflare Worker → Google Translate → Cloudflare Worker �
 - **No Personal Data**: Only text content is sent
 - **Temporary Processing**: Text not stored by Google
 
-&nbsp;  
+&nbsp;  
 
 
 ### Privacy
@@ -361,7 +375,7 @@ Your Browser → Cloudflare Worker → Google Translate → Cloudflare Worker �
 - No analytics
 - No personal information
 
-&nbsp;  
+&nbsp;  
 
 
 **What We Send**:
@@ -369,7 +383,7 @@ Your Browser → Cloudflare Worker → Google Translate → Cloudflare Worker �
 - Target language selection
 - Authentication token (daily rotating)
 
-&nbsp;  
+&nbsp;  
 
 
 **What We Store Locally**:
@@ -377,14 +391,14 @@ Your Browser → Cloudflare Worker → Google Translate → Cloudflare Worker �
 - Language preference
 - Input/output text (for session persistence)
 
-&nbsp;  
+&nbsp;  
 
 
 **Third-Party Services**:
 1. **Cloudflare Workers** - Proxy service (no data retention)
 2. **Google Translate** - Translation service (temporary processing)
 
-&nbsp;  
+&nbsp;  
 
 
 ### Security Best Practices
@@ -395,7 +409,7 @@ Your Browser → Cloudflare Worker → Google Translate → Cloudflare Worker �
 - All data stays in your browser except during translation
 - Clear storage button removes all saved data
 
-&nbsp;  
+&nbsp;  
 
 
 **For Developers**:
@@ -404,7 +418,7 @@ Your Browser → Cloudflare Worker → Google Translate → Cloudflare Worker �
 - Triple fallback system ensures reliability
 - No hardcoded secrets or API keys
 
-&nbsp;  
+&nbsp;  
 
 
 ## Permissions
@@ -415,53 +429,22 @@ Your Browser → Cloudflare Worker → Google Translate → Cloudflare Worker �
 - `clipboardWrite`: Auto-copy translations
 - `storage`: Save state between sessions
 
-&nbsp;  
+&nbsp;  
 
 
-## 📚 Documentation
+## Documentation
 
 - `DEPLOYMENT_GUIDE.md` - How to deploy Cloudflare Worker
 - `WORKFLOW.md` - Detailed translation workflow
 
-&nbsp;  
-
-
-## 🐛 Known Limitations
-
-- Google may rate limit with heavy usage (mitigated by Worker proxy)
-- Requires internet connection
-- Unofficial API (Google could change it)
-
-&nbsp;  
-
-
-## 🤝 Contributing
-
-Suggestions and improvements welcome!
-
-&nbsp;  
-
-
-## 📄 License
-
-Open source - use freely
-
-&nbsp;  
-
-
-## 🙏 Credits
-
-- Google Translate API
-- Cloudflare Workers
-
-&nbsp;  
-
+&nbsp;  
 
 ---
 
 **Version**: 1.0.0  
-**Status**: Production Ready ✅  
+**Status**: Production Ready ✅  
 
-&nbsp;  
+&nbsp;  
+
 
 
