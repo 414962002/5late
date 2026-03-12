@@ -38,6 +38,8 @@ Extension → Cloudflare Worker → Google Translate
 
 ### 01: sidebar.js - Constants
 
+Set Worker URL and enable Worker mode:
+
 Add at top:
 ```javascript
 const WORKER_URL = "https://YOUR-WORKER-NAME.workers.dev/translate";
@@ -47,67 +49,75 @@ const SECRET_SALT = "my-cat-fluffy-loves-small-fish-2026";
 
 ### 02: sidebar.js - Token Generation
 
+Generate daily rotating token for Worker authentication:
+
 ```javascript
 async function generateDailyToken() {
-  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-  const token = await crypto.subtle.digest(
-    'SHA-256',
-    new TextEncoder().encode(today + SECRET_SALT)
-  );
-  return Array.from(new Uint8Array(token))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  const token = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(today + SECRET_SALT)
+  );
+  return Array.from(new Uint8Array(token))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 ```
 
 ### 03: sidebar.js - translateChunk Function
 
+Main translation function that sends requests to Worker:
+
 ```javascript
 async function translateChunk(text, sourceLang, targetLang) {
-  if (USE_WORKER) {
-    const token = await generateDailyToken();
-    
-    const response = await fetch(WORKER_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Token": token
-      },
-      body: JSON.stringify({ text, target: targetLang })
-    });
+  if (USE_WORKER) {
+    const token = await generateDailyToken();
+    
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Token": token
+      },
+      body: JSON.stringify({ text, target: targetLang })
+    });
 
-    if (!response.ok) {
-      throw new Error(`Worker failed: ${response.status}`);
-    }
+    if (!response.ok) {
+      throw new Error(`Worker failed: ${response.status}`);
+    }
 
-    const data = await response.json();
-    if (data.error) {
-      throw new Error(data.message || data.error);
-    }
+    const data = await response.json();
+    if (data.error) {
+      throw new Error(data.message || data.error);
+    }
 
-    return {
-      translatedText: data.translatedText,
-      detectedLang: data.detectedLang || 'auto'
-    };
-  }
-  
-  // Fallback to direct API if needed
+    return {
+      translatedText: data.translatedText,
+      detectedLang: data.detectedLang || 'auto'
+    };
+  }
+  
+  // Fallback to direct API if needed
 }
 ```
 
 ### 04: manifest.json - Permissions
 
+Add Worker domain to extension permissions:
+
 ```json
 "permissions": [
-  "https://translate.googleapis.com/*",
-  "https://clients5.google.com/*",
-  "https://*.workers.dev/*",
-  "clipboardWrite",
-  "storage"
+  "https://translate.googleapis.com/*",
+  "https://clients5.google.com/*",
+  "https://*.workers.dev/*",
+  "clipboardWrite",
+  "storage"
 ]
 ```
 
 ### 05: Test Extension
+
+Verify extension works with Worker:
 
 1. Reload extension in Firefox
 2. Open sidebar
@@ -163,9 +173,9 @@ https://5late-translator.workers.dev/translate?text=hello&tl=ru
 **Expected:**
 ```json
 {
-  "translatedText": "привет",
-  "detectedLang": "en",
-  "source": "gtx"
+  "translatedText": "привет",
+  "detectedLang": "en",
+  "source": "gtx"
 }
 ```
 
@@ -221,7 +231,7 @@ account_id = "YOUR_ACCOUNT_ID"
 **Verify Token:**
 ```powershell
 curl.exe "https://api.cloudflare.com/client/v4/accounts/YOUR_ACCOUNT_ID/tokens/verify" `
-  -H "Authorization: Bearer YOUR_API_TOKEN"
+  -H "Authorization: Bearer YOUR_API_TOKEN"
 ```
 
 Expected: `"status": "active"`
@@ -248,18 +258,18 @@ Your Worker is live at: `https://5late-translator.5lateextentionfirefox.workers.
 **Test deployment:**
 ```powershell
 curl.exe -X POST "https://5late-translator.5lateextentionfirefox.workers.dev/translate" `
-  -H "Content-Type: application/json" `
-  -H "X-Token: $(node -e "const d = new Date().toISOString().slice(0,10); const c = require('crypto'); console.log(c.createHash('sha256').update(d + 'my-cat-fluffy-loves-small-fish-2026').digest('hex'))")" `
-  -d '{"text":"hello","target":"es"}'
+  -H "Content-Type: application/json" `
+  -H "X-Token: $(node -e "const d = new Date().toISOString().slice(0,10); const c = require('crypto'); console.log(c.createHash('sha256').update(d + 'my-cat-fluffy-loves-small-fish-2026').digest('hex'))")" `
+  -d '{"text":"hello","target":"es"}'
 ```
 
 **Expected response:**
 ```json
 {
-  "translatedText": "hola",
-  "detectedLang": "en",
-  "source": "gtx",
-  "service": "cloudflare worker"
+  "translatedText": "hola",
+  "detectedLang": "en",
+  "source": "gtx",
+  "service": "cloudflare worker"
 }
 ```
 
@@ -286,3 +296,4 @@ Example: Change rate limit from 100 to 200 requests/min
 
 **Free tier:** 100k requests/day
 **Security:** Never commit `.env` to GitHub
+
