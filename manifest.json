@@ -1,0 +1,56 @@
+{
+  "manifest_version": 2,
+  "name": "5LATE",
+  "version": "1.0.0",
+  "description": "Quick sidebar translator with auto-copy. Paste text, translate instantly, copy result automatically.",
+  "homepage_url": "https://github.com/414962002/5slate",
+  
+  "developer": {
+    "name": "bugf",
+    "url": "mailto:bugf24@gmail.com"
+  },
+  
+  "permissions": [
+    "https://translate.googleapis.com/*",
+    "https://clients5.google.com/*",
+    "https://*.5lateextentionfirefox.workers.dev/*",
+    "clipboardWrite",
+    "storage"
+  ],
+  
+  "background": {
+    "scripts": ["background.js"]
+  },
+  
+  "browser_action": {
+    "default_title": "5LATE",
+    "default_icon": {
+      "16": "icon16.svg",
+      "32": "icon32.svg"
+    }
+  },
+  
+  "sidebar_action": {
+    "default_title": "5LATE",
+    "default_panel": "sidebar.html",
+    "default_icon": {
+      "16": "icon16.svg",
+      "32": "icon32.svg"
+    }
+  },
+  
+  "icons": {
+    "48": "icon48.svg",
+    "96": "icon96.svg"
+  },
+  
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "5late@bugf24.com",
+      "strict_min_version": "142.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  }
+}
