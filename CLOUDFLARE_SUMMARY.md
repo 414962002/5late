@@ -29,7 +29,7 @@ Part 3: CLOUDFLARE Use Local
 
 &nbsp;
 
-## Part 1: CLOUDFLARE Implementation
+## Part 1: CLOUDFLARE IMPLEMENTATION
 
 ***Purpose:** Build extension with Worker integration from the start*
 
@@ -55,7 +55,7 @@ const SECRET_SALT = "my-cat-fluffy-loves-small-fish-2026";
  
 &nbsp;
 
-### 02: sidebar.js - Token Generation
+### 02: [sidebar.js](sidebar.js) - Token Generation
 
 *Generate daily rotating token for Worker authentication:*
 
@@ -74,7 +74,7 @@ async function generateDailyToken() {
  
 &nbsp;
 
-### 03: sidebar.js - translateChunk Function
+### 03: [sidebar.js](sidebar.js) - translateChunk Function
 
 *Main translation function that sends requests to Worker:*
 
@@ -113,7 +113,7 @@ async function translateChunk(text, sourceLang, targetLang) {
  
 &nbsp;
 
-### 04: manifest.json - Permissions
+### 04: [manifest.json](manifest.json) - Permissions
 
 *Add Worker domain to extension permissions:*
 
@@ -143,7 +143,7 @@ async function translateChunk(text, sourceLang, targetLang) {
 &nbsp;
 
 
-## Part 2: CLOUDFLARE Use Remote
+## Part 2: CLOUDFLARE USE REMOTE
 
 ***Purpose:** Create account, Worker, get URLs and IDs (initial setup)*
 
@@ -165,7 +165,7 @@ async function translateChunk(text, sourceLang, targetLang) {
  
 &nbsp;
 
-### 03: Deploy [cloudflare-worker.js](https://github.com/414962002/5late/blob/main/cloudflare-worker-secure.js) Code
+### 03: Deploy [cloudflare-worker.js](cloudflare-worker.js) Code
 
 1. Click **Edit Code**
 2. Delete existing code
@@ -208,7 +208,7 @@ https://5late-translator.workers.dev/translate?text=hello&tl=ru
  
 &nbsp;
 
-## Part 3: CLOUDFLARE Use Local
+## Part 3: CLOUDFLARE USE LOCAL
 
 ***Purpose:** Create and edit Worker files locally (faster than Dashboard editor)*  
 
@@ -359,6 +359,7 @@ Security: Never commit `.env` to GitHub
 ```
 
 &nbsp;
+
 
 
 
