@@ -42,7 +42,7 @@ Part 3: CLOUDFLARE Use Local
  
 &nbsp;
 
-### 01: sidebar.js - Constants
+### 01: [sidebar.js](sidebar.js) - Constants
 
 *Set Worker URL and enable Worker mode:*
 
@@ -165,7 +165,7 @@ async function translateChunk(text, sourceLang, targetLang) {
  
 &nbsp;
 
-### 03: Deploy cloudflare-worker.js Code
+### 03: Deploy [cloudflare-worker.js](https://github.com/414962002/5late/blob/main/cloudflare-worker-secure.js) Code
 
 1. Click **Edit Code**
 2. Delete existing code
@@ -359,6 +359,7 @@ Security: Never commit `.env` to GitHub
 ```
 
 &nbsp;
+
 
 
 
