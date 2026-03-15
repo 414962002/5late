@@ -1,76 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>5LATE</title>
-  <link rel="stylesheet" href="sidebar.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>5LATE</title>
+  <link rel="stylesheet" href="sidebar.css">
 </head>
 <body>
-  <div class="sidebar-container">
-    <!-- Header -->
-    <div class="sidebar-header">
-      <div class="header-row">
-        <div id="headerLine1">auto-detect → Russian</div>
-        <button id="clearStorageBtn" class="clear-storage-btn" title="Clear saved state">clear storage</button>
-      </div>
-      <div class="header-row">
-        <div id="headerLine2">ready to translate</div>
-        <div id="storageSize" class="storage-size">0 kb</div>
-      </div>
-    </div>
+  <div class="sidebar-container">
+    <!-- Header -->
+    <div class="sidebar-header">
+      <div class="header-row">
+        <div id="headerLine1">auto-detect → Russian</div>
+        <button id="clearStorageBtn" class="clear-storage-btn" title="Clear saved state">clear storage</button>
+      </div>
+      <div class="header-row">
+        <div id="headerLine2">ready to translate</div>
+        <div id="storageSize" class="storage-size">0 kb</div>
+      </div>
+    </div>
 
-    <!-- Progress Bar -->
-    <div id="progressBar"></div>
+    <!-- Progress Bar -->
+    <div id="progressBar"></div>
 
-    <!-- Language Selector Block -->
-    <div class="language-selector-block">
-      <div class="selector-row">
-        <div class="selector-label">target lang</div>
-        <div class="custom-dropdown" id="targetLangDropdown">
-          <button class="dropdown-button" id="dropdownButton">
-            <span id="selectedLang">Russian</span>
-            <span class="dropdown-arrow">▼</span>
-          </button>
-          <div class="dropdown-menu" id="dropdownMenu">
-            <div class="dropdown-option" data-value="ru">Russian</div>
-            <div class="dropdown-option" data-value="en">English</div>
-            <div class="dropdown-option" data-value="es">Spanish</div>
-            <div class="dropdown-option" data-value="fr">French</div>
-            <div class="dropdown-option" data-value="de">German</div>
-            <div class="dropdown-option" data-value="it">Italian</div>
-            <div class="dropdown-option" data-value="ja">Japanese</div>
-            <div class="dropdown-option" data-value="zh-CN">Chinese</div>
-            <div class="dropdown-option" data-value="ar">Arabic</div>
-            <div class="dropdown-option" data-value="hi">Hindi</div>
-          </div>
-        </div>
-        <input type="hidden" id="targetLang" value="ru">
-      </div>
-    </div>
+    <!-- Language Selector Block -->
+    <div class="language-selector-block">
+      <div class="selector-row">
+        <div class="selector-label">target lang</div>
+        <div class="custom-dropdown" id="targetLangDropdown">
+          <button class="dropdown-button" id="dropdownButton">
+            <span id="selectedLang">Russian</span>
+            <span class="dropdown-arrow">▼</span>
+          </button>
+          <div class="dropdown-menu" id="dropdownMenu">
+            <div class="dropdown-option" data-value="ru">Russian</div>
+            <div class="dropdown-option" data-value="en">English</div>
+            <div class="dropdown-option" data-value="es">Spanish</div>
+            <div class="dropdown-option" data-value="fr">French</div>
+            <div class="dropdown-option" data-value="de">German</div>
+            <div class="dropdown-option" data-value="it">Italian</div>
+            <div class="dropdown-option" data-value="ja">Japanese</div>
+            <div class="dropdown-option" data-value="zh-CN">Chinese</div>
+            <div class="dropdown-option" data-value="ar">Arabic</div>
+            <div class="dropdown-option" data-value="hi">Hindi</div>
+          </div>
+        </div>
+        <input type="hidden" id="targetLang" value="ru">
+      </div>
+    </div>
 
-    <!-- Body -->
-    <div class="sidebar-body">
-      <!-- Input Area -->
-      <div class="input-section">
-        <textarea id="inputText" placeholder="paste or type text here..." rows="8"></textarea>
-      </div>
+    <!-- Body -->
+    <div class="sidebar-body">
+      <!-- Input Area -->
+      <div class="input-section">
+        <textarea id="inputText" placeholder="paste or type text here..." rows="8"></textarea>
+      </div>
 
-      <!-- Output Area -->
-      <div class="output-section">
-        <textarea id="outputText" placeholder="translation will appear here..." rows="8" readonly></textarea>
-      </div>
+      <!-- Output Area -->
+      <div class="output-section">
+        <textarea id="outputText" placeholder="translation will appear here..." rows="8" readonly></textarea>
+      </div>
 
-      <!-- Progress Indicator -->
-      <div id="progressIndicator" class="progress-indicator" style="display: none;">
-        <span id="progressText">translating chunk 1 of 3...</span>
-      </div>
+      <!-- Progress Indicator -->
+      <div id="progressIndicator" class="progress-indicator" style="display: none;">
+        <span id="progressText">translating chunk 1 of 3...</span>
+      </div>
 
-      <!-- Status Message -->
-      <div id="statusMessage" class="status-message"></div>
-    </div>
-  </div>
+      <!-- Status Message -->
+      <div id="statusMessage" class="status-message"></div>
+    </div>
+  </div>
 
-  <script src="sidebar.js"></script>
+  <script src="sidebar.js"></script>
 </body>
 </html>
+
