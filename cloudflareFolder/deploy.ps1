@@ -37,6 +37,32 @@ do {
         
         try {
             Invoke-WebRequest -Method Get -Uri "$baseUrl/content/v2" -Headers $headers -OutFile $backupFile
+            
+            # Strip multipart boundaries from downloaded file
+            $raw = Get-Content -Path $backupFile -Raw -Encoding UTF8
+            $lines = $raw -split "`r?`n"
+            
+            # Find first empty line (end of multipart headers) and skip to JS content
+            $startIndex = 0
+            for ($i = 0; $i -lt $lines.Count; $i++) {
+                if ($lines[$i].Trim() -eq "") {
+                    $startIndex = $i + 1
+                    break
+                }
+            }
+            
+            # Find last JS line (trim trailing boundary --xxx--)
+            $endIndex = $lines.Count - 1
+            for ($i = $lines.Count - 1; $i -ge 0; $i--) {
+                if ($lines[$i].Trim() -ne "" -and -not $lines[$i].StartsWith("--")) {
+                    $endIndex = $i
+                    break
+                }
+            }
+            
+            $cleanJs = ($lines[$startIndex..$endIndex]) -join "`r`n"
+            Set-Content -Path $backupFile -Value $cleanJs -Encoding UTF8 -NoNewline
+            
             Write-Host "Success! Saved as $backupFile" -ForegroundColor Green
         }
         catch {
@@ -71,14 +97,14 @@ do {
                 "--$boundary`r`n" +
                 "Content-Disposition: form-data; name=`"metadata`"`r`n" +
                 "Content-Type: application/json`r`n`r`n" +
-                '{"main_module":"index.js"}' + "`r`n"
+                '{"main_module":"worker.js"}' + "`r`n"
             )
             $ms.Write($metaPart, 0, $metaPart.Length)
 
             # Script part
             $scriptHeader = [System.Text.Encoding]::ASCII.GetBytes(
                 "--$boundary`r`n" +
-                "Content-Disposition: form-data; name=`"index.js`"; filename=`"index.js`"`r`n" +
+                "Content-Disposition: form-data; name=`"worker.js`"; filename=`"worker.js`"`r`n" +
                 "Content-Type: application/javascript+module`r`n`r`n"
             )
             $ms.Write($scriptHeader, 0, $scriptHeader.Length)
@@ -120,5 +146,4 @@ do {
 } while ($true)
 
 Write-Host ""
-
 
