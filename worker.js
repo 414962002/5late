@@ -1,8 +1,9 @@
 // Cloudflare Worker for 5LATE Translation Proxy
 // With daily rotating token + rate limiting
+// UPDATED: Single-word detection for better translation quality
 
 // Secret salt for token generation (change this to your own random string)
-const SECRET_SALT = "my-cat-fluffy-loves-fish-2026";
+const SECRET_SALT = "cloudflare-worker-for-5LATE-translation-proxy";
 
 // Rate limiting configuration
 const RATE_LIMIT = 100; // requests per window
@@ -60,7 +61,7 @@ function cleanupRateLimits() {
 }
 
 export default {
-  async fetch(request, env, ctx) {
+  async fetch(request) {
     
     // Handle CORS preflight
     if (request.method === "OPTIONS") {
@@ -165,14 +166,37 @@ export default {
         });
       }
 
-      // Try GTX endpoint first
-      const gtxUrl = 
+      // Detect single word: letters only, max 30 chars
+      const isSingleWord = /^[\p{L}]{1,30}$/u.test(text.trim());
+
+      // Detect script type
+      const hasCyrillic = /[\u0400-\u04FF]/.test(text);
+      const hasLatin = /^[A-Za-z]+$/.test(text.trim());
+
+      // Build query based on script:
+      // Cyrillic → use Russian context trick to get correct dictionary meaning
+      // Latin → plain word with sl=en
+      // Other / sentence → auto detection
+      let query = text;
+      let sourceLang = "auto";
+
+      if (isSingleWord) {
+        if (hasCyrillic) {
+          query = "значение слова " + text;
+          sourceLang = "ru";
+        } else if (hasLatin) {
+          query = text;
+          sourceLang = "en";
+        }
+      }
+
+      let gtxUrl = 
         "https://translate.googleapis.com/translate_a/single" +
         "?client=gtx" +
-        "&sl=auto" +
+        "&sl=" + sourceLang +
         "&tl=" + encodeURIComponent(targetLang) +
         "&dt=t" +
-        "&q=" + encodeURIComponent(text);
+        "&q=" + encodeURIComponent(query);
 
       let translatedText = '';
       let detectedLang = 'auto';
@@ -188,7 +212,7 @@ export default {
         });
 
         if (!response.ok) {
-          throw new Error(`GTX failed: ${response.status}`);
+          throw new Error(`${source} failed: ${response.status}`);
         }
 
         const result = await response.json();
@@ -204,9 +228,18 @@ export default {
         
         detectedLang = result[2] || "auto";
 
+        // Clean up context prefix from response
+        if (isSingleWord) {
+          translatedText = translatedText
+            .replace(/^значение слова\s+/i, "")
+            .replace(/^meaning of (the )?word\s+/i, "")
+            .replace(/^meaning of /i, "")
+            .trim();
+        }
+
       } catch (gtxError) {
         // Fallback to clients5
-        console.log('[TRANSLATE] GTX failed, trying clients5:', gtxError.message);
+        console.log('[TRANSLATE] Primary endpoint failed, trying clients5:', gtxError.message);
 
         const clients5Url = "https://clients5.google.com/translate_a/t";
         
@@ -236,7 +269,7 @@ export default {
           translatedText = result[0].map(x => x[0]).join("");
         }
 
-        source = 'clients5';
+        source = 'clients5-fallback';
       }
 
       // Cleanup rate limits periodically
@@ -273,5 +306,4 @@ export default {
     }
   }
 };
-
 
