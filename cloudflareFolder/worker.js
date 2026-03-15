@@ -3,7 +3,7 @@
 // UPDATED: Single-word detection for better translation quality
 
 // Secret salt for token generation (change this to your own random string)
-const SECRET_SALT = "cloudflare-worker-for-5LATE-translation-proxy";
+const SECRET_SALT = "your-own-random-string";
 
 // Rate limiting configuration
 const RATE_LIMIT = 100; // requests per window
