@@ -34,6 +34,7 @@ Part 4: CLOUDFLARE Use Local (deploy.ps1)
 - 05: Option 2 - Upload Worker
 - 06: Edit Worker Workflow
 - 07: Configuration
+- 08: Verify Deployed Version
 ```
 
 &nbsp;
@@ -370,17 +371,6 @@ curl.exe -X POST "https://5late-translator.5lateextentionfirefox.workers.dev/tra
 
 &nbsp;
 
----
-
-```
-Free tier: 100k requests/day
-Security: Never commit `.env` to GitHub
-```
-
-&nbsp;
-
----
-
 ## Part 4: CLOUDFLARE USE LOCAL (deploy.ps1)
 
 ***Purpose:** Upload and download Worker using Cloudflare REST API directly — no Wrangler, no npm required*
@@ -389,7 +379,7 @@ Security: Never commit `.env` to GitHub
 
 ### 01: What is deploy.ps1
 
-`deploy.ps1` is a PowerShell script that talks directly to the Cloudflare API.
+`deploy.ps1` is a PowerShell script that talks directly to the Cloudflare API.    
 No Node.js or Wrangler needed — only PowerShell (built into Windows).
 
 **API used:**
@@ -403,10 +393,12 @@ GET https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/workers/scripts/{
 
 ### 02: Prerequisites
 
+```
 - PowerShell (built into Windows)
-- Cloudflare API Token with **Workers Scripts - Edit** permission
+- Cloudflare API Token with `Workers Scripts - Edit` permission
 - Account ID from Cloudflare Dashboard
 - `worker.js` file in the same folder as `deploy.ps1`
+```
 
 &nbsp;
 
@@ -434,8 +426,8 @@ Choose action:
 
 ### 04: Option 1 — Download Worker
 
-Downloads the current live worker code from Cloudflare.
-Saves as a timestamped backup file.
+Downloads the current live worker code from Cloudflare.  
+Saves as a timestamped backup file.  
 
 ```
 worker_backup_2026-03-14_06-30-00.js
@@ -457,7 +449,9 @@ Content-Type: application/javascript+module
 
 These boundary lines are not valid JavaScript — if you tried to upload this file back, it would fail.
 
-**Fix:** `deploy.ps1` automatically strips the boundary header and footer after downloading, keeping only the clean JS code. The saved backup file is ready to edit and re-upload without any manual cleanup.
+**Fix:**   
+- `deploy.ps1` automatically strips the boundary header and footer after downloading, keeping only the clean JS code.  
+- The saved backup file is ready to edit and re-upload without any manual cleanup.  
 
 &nbsp;
 
@@ -467,8 +461,8 @@ Reads local `worker.js` and uploads to Cloudflare via multipart PUT request.
 
 Upload format:
 
-- `metadata` part: `{"main_module":"worker.js"}` — tells Cloudflare it's an ES6 module
-- `worker.js` part: full content of `worker.js` as UTF-8 binary
+- `metadata` part: `{"main_module":"worker.js"}` — tells Cloudflare it's an ES6 module  
+- `worker.js` part: full content of `worker.js` as UTF-8 binary  
 
 On success:
 
@@ -512,6 +506,33 @@ $SCRIPT_NAME = "5late-translator"
 ```
 
 To use with a different worker or account — update these three values only.
+
+&nbsp;
+
+### 08: Verify Deployed Version
+
+After uploading, check which version is live by opening in browser:
+
+```
+https://5late-translator.5lateextentionfirefox.workers.dev/version
+```
+
+Returns:
+```json
+{
+  "version": "1.1.0",
+  "date": "2026-03-15"
+}
+```
+
+No auth required. If version matches your local `worker.js` — deployment was successful.
+
+Version is defined at the top of `worker.js`:
+```javascript
+const WORKER_VERSION = "1.1.0";
+```
+
+Bump this value every time you make changes — so you can always confirm what's running on Cloudflare.
 
 &nbsp;
 
