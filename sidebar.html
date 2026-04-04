@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>5LATE</title>
+  <link rel="stylesheet" href="sidebar.css">
+</head>
+<body>
+  <div class="sidebar-container">
+    <!-- Header -->
+    <div class="sidebar-header">
+      <div class="header-row">
+        <div id="headerLine2">ready to translate</div>
+        <button id="clearStorageBtn" class="clear-storage-btn" title="Clear saved state">✕</button>
+      </div>
+      <!-- hidden storage size tracker -->
+      <span id="storageSize" style="display:none">0 kb</span>
+    </div>
+
+    <!-- Progress Bar -->
+    <div id="progressBar"></div>
+
+    <!-- Language Selector Block -->
+    <div class="language-selector-block">
+      <div id="headerLine1" class="status-left">auto-detect → ru</div>
+      <div class="lang-buttons">
+        <button class="lang-btn" data-value="ru">ru</button>
+        <button class="lang-btn" data-value="en">en</button>
+        <button class="lang-btn" data-value="es">es</button>
+        <button class="lang-btn" data-value="fr">fr</button>
+        <button class="lang-btn" data-value="de">de</button>
+        <button class="lang-btn" data-value="it">it</button>
+        <button class="lang-btn" data-value="ja">ja</button>
+        <button class="lang-btn" data-value="zh-CN">zh</button>
+        <button class="lang-btn" data-value="ar">ar</button>
+        <button class="lang-btn" data-value="hi">hi</button>
+        <button class="lang-btn" data-value="he">he</button>
+      </div>
+      <input type="hidden" id="targetLang" value="ru">
+    </div>
+
+    <!-- Body -->
+    <div class="sidebar-body">
+      <!-- Input Area -->
+      <div class="input-section">
+        <textarea id="inputText" placeholder="…" rows="8"></textarea>
+      </div>
+
+      <!-- Output Area -->
+      <div class="output-section">
+        <textarea id="outputText" class="ltr" placeholder="" rows="8" readonly></textarea>
+      </div>
+
+      <!-- Progress Indicator -->
+      <div id="progressIndicator" class="progress-indicator" style="display: none;">
+        <span id="progressText">translating chunk 1 of 3...</span>
+      </div>
+
+      <!-- Status Message -->
+      <div id="statusMessage" class="status-message"></div>
+    </div>
+  </div>
+
+  <script src="sidebar.js"></script>
+</body>
+</html>

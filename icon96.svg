@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <defs>
+    <filter id="circleShadow96">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="black" flood-opacity="0.7"/>
+    </filter>
+  </defs>
+  <circle cx="48" cy="48" r="44" fill="white" stroke="black" stroke-width="2" filter="url(#circleShadow96)"/>
+  <text x="48" y="72" font-family="Segoe UI, Tahoma, sans-serif" font-size="64" font-weight="normal" fill="black" text-anchor="middle">5</text>
+</svg>
