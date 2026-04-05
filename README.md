@@ -1,4 +1,4 @@
-<img src="img/12.png" align="center" width="1000">
+<img src="img/13.png" align="center" width="1000">
 <br clear="all">
 
 # 5LATE - Firefox Translation Extension
